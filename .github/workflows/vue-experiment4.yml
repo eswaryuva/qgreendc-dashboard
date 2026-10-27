@@ -1,48 +1,45 @@
-name: Experiment 4 - Vue build and component tests
+name: Vue build and component regression tests
 
 on:
   push:
     branches:
       - test/chat-gpt-git-html
+      - experiment5/vue-multi-component-update
     paths:
       - 'vue-experiment4-src/**'
       - '.github/workflows/vue-experiment4.yml'
   pull_request:
     branches:
       - main
+      - test/chat-gpt-git-html
     paths:
       - 'vue-experiment4-src/**'
       - '.github/workflows/vue-experiment4.yml'
 
 jobs:
   validate:
-    name: Vue unit tests and Vite build
+    name: Vue component tests and production build
     runs-on: ubuntu-latest
     timeout-minutes: 12
     permissions:
       contents: read
     steps:
-      - name: Check out the repository
+      - name: Check out repository
         uses: actions/checkout@v5
-
       - name: Set up Node.js
         uses: actions/setup-node@v5
         with:
           node-version: '22'
-
-      - name: Install npm dependencies
+      - name: Install dependencies
         working-directory: vue-experiment4-src
         run: npm install --no-audit --no-fund
-
-      - name: Run Vue component tests
+      - name: Run all existing and new component tests
         working-directory: vue-experiment4-src
         run: npm test
-
       - name: Build production app
         working-directory: vue-experiment4-src
         run: npm run build
-
-      - name: Save Vite output as a CI artifact
+      - name: Upload tested Vite output
         uses: actions/upload-artifact@v4
         with:
           name: vue-experiment4-site
@@ -50,7 +47,7 @@ jobs:
           if-no-files-found: error
 
   publish-output:
-    name: Commit Vite output for branch-based GitHub Pages
+    name: Commit Vite output only on deployment branch
     needs: validate
     if: github.event_name == 'push' && github.ref == 'refs/heads/test/chat-gpt-git-html'
     runs-on: ubuntu-latest
@@ -58,24 +55,22 @@ jobs:
     permissions:
       contents: write
     steps:
-      - name: Check out the working branch
+      - name: Check out working branch
         uses: actions/checkout@v5
-
-      - name: Download built Vue assets
+      - name: Download tested assets
         uses: actions/download-artifact@v4
         with:
           name: vue-experiment4-site
           path: vue-experiment4/
-
-      - name: Commit static output to the same branch
+      - name: Commit static output
         shell: bash
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add vue-experiment4/
           if git diff --cached --quiet; then
-            echo "Static output is unchanged."
+            echo "Built website unchanged"
           else
-            git commit -m "build: publish Experiment 4 Vue assets [skip ci]"
+            git commit -m "build: publish Vue app [skip ci]"
             git push origin HEAD:test/chat-gpt-git-html
           fi

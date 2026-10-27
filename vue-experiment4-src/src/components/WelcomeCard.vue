@@ -1,10 +1,14 @@
 <script setup>
 import { onMounted, ref } from 'vue'
+import GreetingModePicker from './GreetingModePicker.vue'
+import GreetingMessage from './GreetingMessage.vue'
 
 const STORAGE_KEY = 'test-gpt-git.vue-experiment4.name.v1'
+const MODE_KEY = 'test-gpt-git.vue-experiment5.mode.v1'
 const fullName = ref('')
 const greetedName = ref('')
 const notice = ref('')
+const greetingMode = ref('friendly')
 
 function normalizeName(value) {
   return value.trim().replace(/\s+/g, ' ')
@@ -20,10 +24,22 @@ onMounted(() => {
         greetedName.value = normalized
       }
     }
+    const storedMode = localStorage.getItem(MODE_KEY)
+    if (storedMode === 'professional') greetingMode.value = storedMode
   } catch {
-    // Storage can be unavailable in privacy modes. The form still works.
+    // Browser privacy settings may prevent storage access.
   }
 })
+
+function changeMode(newMode) {
+  if (newMode !== 'friendly' && newMode !== 'professional') return
+  greetingMode.value = newMode
+  try {
+    localStorage.setItem(MODE_KEY, newMode)
+  } catch {
+    // Greeting selection still works when localStorage is blocked.
+  }
+}
 
 function submitName() {
   const normalized = normalizeName(fullName.value)
@@ -39,7 +55,7 @@ function submitName() {
   try {
     localStorage.setItem(STORAGE_KEY, normalized)
   } catch {
-    // Do not block greeting if browser storage is unavailable.
+    // The greeting still works even when storage is unavailable.
   }
 }
 
@@ -50,7 +66,7 @@ function clearName() {
   try {
     localStorage.removeItem(STORAGE_KEY)
   } catch {
-    // Reset the visible form regardless of browser storage permissions.
+    // Clearing the visible form does not depend on storage access.
   }
 }
 </script>
@@ -75,10 +91,8 @@ function clearName() {
     </form>
     <p v-if="notice" class="validation" role="alert">{{ notice }}</p>
 
-    <div v-if="greetedName" class="greeting" data-testid="welcome-message" role="status" aria-live="polite">
-      <div><span class="greeting-emoji" aria-hidden="true">🎉</span><strong>Welcome, {{ greetedName }}! 👋</strong></div>
-      <button type="button" class="clear-btn" @click="clearName">Clear saved name</button>
-    </div>
+    <GreetingModePicker :model-value="greetingMode" @update:model-value="changeMode" />
+    <GreetingMessage v-if="greetedName" :name="greetedName" :mode="greetingMode" @clear="clearName" />
 
     <div class="feature-grid" aria-label="App features">
       <span>✓ Reactive UI</span><span>✓ Local persistence</span><span>✓ Component tested</span>
