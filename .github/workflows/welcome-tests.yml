@@ -1,0 +1,36 @@
+name: Welcome app tests
+
+on:
+  push:
+    branches:
+      - test/chat-gpt-git-html
+    paths:
+      - 'test-gpt-git/**'
+      - '.github/workflows/welcome-tests.yml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'test-gpt-git/**'
+      - '.github/workflows/welcome-tests.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Node.js welcome tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate JavaScript syntax
+        run: node --check test-gpt-git/app.js
+      - name: Run the welcome app unit tests
+        run: node --test test-gpt-git/tests/*.test.mjs
