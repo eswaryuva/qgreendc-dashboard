@@ -19,7 +19,7 @@ on:
 jobs:
   validate:
     name: Vue component tests and production build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 12
     permissions:
       contents: read
@@ -32,7 +32,7 @@ jobs:
           node-version: '22'
       - name: Install dependencies
         working-directory: vue-experiment4-src
-        run: npm install --no-audit --no-fund
+        run: npm install --include=optional --no-audit --no-fund
       - name: Run all existing and new component tests
         working-directory: vue-experiment4-src
         run: npm test
@@ -50,7 +50,7 @@ jobs:
     name: Commit Vite output only on deployment branch
     needs: validate
     if: github.event_name == 'push' && github.ref == 'refs/heads/test/chat-gpt-git-html'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 5
     permissions:
       contents: write
