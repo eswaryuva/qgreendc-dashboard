@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
+import { nextTick } from 'vue'
 import WelcomeCard from './WelcomeCard.vue'
 
 const KEY = 'test-gpt-git.vue-experiment4.name.v1'
@@ -22,9 +23,10 @@ describe('WelcomeCard', () => {
     expect(localStorage.getItem(KEY)).toBe('Ada Lovelace')
   })
 
-  it('restores the saved name and greeting when remounted', () => {
+  it('restores the saved name and greeting when remounted', async () => {
     localStorage.setItem(KEY, 'Grace Hopper')
     const wrapper = mount(WelcomeCard)
+    await nextTick()
     expect(wrapper.get('input[name="fullName"]').element.value).toBe('Grace Hopper')
     expect(wrapper.get('[data-testid="welcome-message"]').text()).toContain('Welcome, Grace Hopper!')
   })
@@ -32,6 +34,7 @@ describe('WelcomeCard', () => {
   it('clears the saved name when the reset button is clicked', async () => {
     localStorage.setItem(KEY, 'Alan Turing')
     const wrapper = mount(WelcomeCard)
+    await nextTick()
     await wrapper.get('.clear-btn').trigger('click')
     expect(localStorage.getItem(KEY)).toBe(null)
     expect(wrapper.find('[data-testid="welcome-message"]').exists()).toBe(false)
