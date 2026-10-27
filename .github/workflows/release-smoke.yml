@@ -14,7 +14,7 @@ permissions:
 jobs:
   live-browser:
     name: Verify both published apps in Chromium
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
       - name: Checkout source
