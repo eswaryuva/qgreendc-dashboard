@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#111827">
+  <title>Test GPT Git — ChatGPT + GitHub</title>
+  <link rel="stylesheet" href="./styles.css">
+  <script src="./app.js" defer></script>
+</head>
+<body>
+  <main>
+    <span class="eyebrow">ChatGPT × GitHub • Integration test</span>
+    <h1>Test GPT Git</h1>
+    <p>A standalone HTML page created through a regular ChatGPT conversation and committed directly to a GitHub feature branch — no Codex, ZIP, or local build required.</p>
+    <span class="badge">HTML · CSS · JavaScript</span>
+    <form id="welcomeForm">
+      <label for="fullName">Your full name</label>
+      <div class="form-row">
+        <input id="fullName" name="fullName" type="text" placeholder="Enter your full name" autocomplete="name" maxlength="80" required>
+        <button type="submit">Submit</button>
+      </div>
+      <p id="welcomeMessage" role="status" aria-live="polite"></p>
+      <p class="privacy-note">Your name is remembered in this browser only.</p>
+    </form>
+    <div class="secondary-test">
+      <button id="testButton" type="button">Run original interaction test</button>
+      <p id="result" role="status" aria-live="polite">Click to verify the original JavaScript test still works.</p>
+    </div>
+    <footer>Test only · No external APIs or dependencies</footer>
+  </main>
+</body>
+</html>
