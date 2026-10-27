@@ -14,10 +14,20 @@
     h1 { font-size: clamp(2rem, 7vw, 3.5rem); line-height: 1.1; margin: 16px 0; }
     p { color: #cbd5e1; line-height: 1.65; }
     .badge { display: inline-block; border: 1px solid #8ee8bf75; color: #a7f3d0; background: #065f4644; border-radius: 99px; padding: 9px 13px; font-weight: 650; font-size: .85rem; }
-    button { margin-top: 24px; padding: 13px 20px; border: 0; border-radius: 12px; background: #8ee8bf; color: #052e24; font: inherit; font-weight: 750; cursor: pointer; }
+    form { margin-top: 28px; }
+    label { display: block; margin-bottom: 10px; font-weight: 650; }
+    .form-row { display: flex; align-items: stretch; gap: 10px; flex-wrap: wrap; }
+    input { flex: 1 1 220px; min-width: 0; border: 1px solid #ffffff45; border-radius: 12px; padding: 13px 15px; background: #0f172a; color: #f8fafc; font: inherit; }
+    input::placeholder { color: #94a3b8; }
+    input:focus-visible { outline: 3px solid #8ee8bf; outline-offset: 2px; }
+    button { padding: 13px 20px; border: 0; border-radius: 12px; background: #8ee8bf; color: #052e24; font: inherit; font-weight: 750; cursor: pointer; }
     button:hover { background: #bbf7d0; }
     button:focus-visible { outline: 3px solid white; outline-offset: 4px; }
-    #result { min-height: 2em; }
+    #welcomeMessage { min-height: 2em; margin-top: 16px; font-size: 1.12rem; font-weight: 700; color: #a7f3d0; }
+    .secondary-test { margin-top: 24px; border-top: 1px solid #ffffff25; padding-top: 18px; }
+    .secondary-test button { background: transparent; border: 1px solid #ffffff55; color: #e2e8f0; font-size: .85rem; }
+    .secondary-test button:hover { background: #ffffff18; }
+    #result { min-height: 2em; font-size: .85rem; }
     footer { font-size: .75rem; margin-top: 32px; opacity: .7; }
   </style>
 </head>
@@ -27,11 +37,34 @@
     <h1>Test GPT Git</h1>
     <p>A standalone HTML page created through a regular ChatGPT conversation and committed directly to a GitHub feature branch — no Codex, ZIP, or local build required.</p>
     <span class="badge">HTML · CSS · JavaScript</span>
-    <div><button id="testButton" type="button">Run interaction test</button></div>
-    <p id="result" role="status" aria-live="polite">Click the button to verify JavaScript is working.</p>
+    <form id="welcomeForm">
+      <label for="fullName">Your full name</label>
+      <div class="form-row">
+        <input id="fullName" name="fullName" type="text" placeholder="Enter your full name" autocomplete="name" maxlength="80" required>
+        <button type="submit">Submit</button>
+      </div>
+      <p id="welcomeMessage" role="status" aria-live="polite"></p>
+    </form>
+    <div class="secondary-test">
+      <button id="testButton" type="button">Run original interaction test</button>
+      <p id="result" role="status" aria-live="polite">Click to verify the original JavaScript test still works.</p>
+    </div>
     <footer>Test only · No external APIs or dependencies</footer>
   </main>
   <script>
+    document.getElementById('welcomeForm').addEventListener('submit', (event) => {
+      event.preventDefault();
+      const input = document.getElementById('fullName');
+      const fullName = input.value.trim().replace(/\s+/g, ' ');
+      const message = document.getElementById('welcomeMessage');
+      if (!fullName) {
+        message.textContent = 'Please enter your full name.';
+        input.focus();
+        return;
+      }
+      message.textContent = `Welcome, ${fullName}! 👋🎉`;
+    });
+
     document.getElementById('testButton').addEventListener('click', () => {
       document.getElementById('result').textContent = 'Success! JavaScript works and the sample page is interactive.';
     });
